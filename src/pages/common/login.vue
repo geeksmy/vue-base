@@ -12,14 +12,17 @@
 </template>
 
 <script lang="ts" setup>
-import {ref} from "vue";
-import {useUserStore} from "~/stores/user.ts";
+import {getCurrentInstance, ref} from "vue";
+import {useUserStore} from "@/stores/user.ts";
 
 const LoginForm: any = ref({username: "", password: ""})
 const {GetTokenAndUserInfo} = useUserStore()
+const {proxy} = getCurrentInstance() as any
 
 async function PostLogin() {
-    await GetTokenAndUserInfo(LoginForm.value)
+    await GetTokenAndUserInfo(LoginForm.value).then(() => {
+        proxy.$router.push("/")
+    })
 }
 
 </script>
