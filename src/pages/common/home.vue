@@ -1,7 +1,7 @@
 <template>
     <h1>主页</h1>
     <transition>
-        <h1 class="animate__animated animate__bounce">{{ token }}</h1>
+        <h1 v-if="true" animate-bounce-in-up>{{ token }}</h1>
     </transition>
     <div>{{ userInfo }}</div>
 </template>
