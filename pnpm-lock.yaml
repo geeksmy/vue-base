@@ -43,6 +43,15 @@ devDependencies:
   unocss:
     specifier: ^0.56.5
     version: 0.56.5(postcss@8.4.31)(vite@4.4.11)
+  unocss-preset-chinese:
+    specifier: ^0.3.0
+    version: 0.3.0(unocss@0.56.5)
+  unocss-preset-ease:
+    specifier: ^0.0.3
+    version: 0.0.3(unocss@0.56.5)
+  unocss-preset-extra:
+    specifier: ^0.5.2
+    version: 0.5.2(unocss@0.56.5)
   vite:
     specifier: ^4.4.5
     version: 4.4.11(@types/node@20.8.5)
@@ -487,8 +496,18 @@ packages:
       unconfig: 0.3.11
     dev: true
 
+  /@unocss/core@0.55.7:
+    resolution: {integrity: sha512-c+bWe844Xjlwc1EPwHj0+n3LpntJG7ELPbEOOxNIG+CQdcEX0l1G0rkM8+nKstJ9WJmgpf1HdJQLVMF62HXvhw==}
+    dev: true
+
   /@unocss/core@0.56.5:
     resolution: {integrity: sha512-fx5VhOjSHn0HdV2D34pEwFMAHJcJQRTCp1xEE4GzxY1irXzaa+m2aYf5PZjmDxehiOC16IH7TO9FOWANXk1E0w==}
+    dev: true
+
+  /@unocss/extractor-arbitrary-variants@0.55.7:
+    resolution: {integrity: sha512-imK2g/frlo5Ag0uVB+C/Psyo5+9AnqhoRAgYa6gyrQ/TJnrnwf+M3jFngU9evIMHw92vig1DGfPa2ZId901DwQ==}
+    dependencies:
+      '@unocss/core': 0.55.7
     dev: true
 
   /@unocss/extractor-arbitrary-variants@0.56.5:
@@ -534,6 +553,13 @@ packages:
       ofetch: 1.3.3
     transitivePeerDependencies:
       - supports-color
+    dev: true
+
+  /@unocss/preset-mini@0.55.7:
+    resolution: {integrity: sha512-ZCskE2uprjGkpQezEPM6KPMf84rIZEUNc1p2DxWVHaFUPRV24/JSNsO4PsKrQgNIb2dLQxzPNlMzQJI7ssdBXQ==}
+    dependencies:
+      '@unocss/core': 0.55.7
+      '@unocss/extractor-arbitrary-variants': 0.55.7
     dev: true
 
   /@unocss/preset-mini@0.56.5:
@@ -1561,6 +1587,44 @@ packages:
 
   /undici-types@5.25.3:
     resolution: {integrity: sha512-Ga1jfYwRn7+cP9v8auvEXN1rX3sWqlayd4HP7OKk4mZWylEmu3KzXDUGrQUN6Ol7qo1gPvB2e5gX6udnyEPgdA==}
+    dev: true
+
+  /unocss-preset-chinese@0.3.0(unocss@0.56.5):
+    resolution: {integrity: sha512-8Be43p6JxK+f50hbE9CXwrvyMmeSEMiw+lcu+6cZMnPQOOMoPYl/9IwC3SsoZw8d6aqnlAR5lBC6rMXICgAbjg==}
+    peerDependencies:
+      '@unocss/nuxt': '*'
+      unocss: '*'
+    peerDependenciesMeta:
+      '@unocss/nuxt':
+        optional: true
+      unocss:
+        optional: true
+    dependencies:
+      '@unocss/core': 0.55.7
+      '@unocss/preset-mini': 0.55.7
+      unocss: 0.56.5(postcss@8.4.31)(vite@4.4.11)
+    dev: true
+
+  /unocss-preset-ease@0.0.3(unocss@0.56.5):
+    resolution: {integrity: sha512-xSJcLZWeEBmeElddjLgKTY/NHP1ycwxSfSW6ldCG2OWPfa4vNNrRl0eL+kuMWNWzewCKGeQS/XIYI66mmd0R0Q==}
+    peerDependencies:
+      '@unocss/nuxt': '*'
+      unocss: '*'
+    peerDependenciesMeta:
+      '@unocss/nuxt':
+        optional: true
+      unocss:
+        optional: true
+    dependencies:
+      unocss: 0.56.5(postcss@8.4.31)(vite@4.4.11)
+    dev: true
+
+  /unocss-preset-extra@0.5.2(unocss@0.56.5):
+    resolution: {integrity: sha512-DQB2BcuE5jq3XiQahN2NeIeJIQOqgnfHoDIsJ6dPMkxgsuv8vT+xgzcJP42bgTBW+2Aym/fwDcqJOHqIAVqw9g==}
+    peerDependencies:
+      unocss: '>= 0.31.0 < 1'
+    dependencies:
+      unocss: 0.56.5(postcss@8.4.31)(vite@4.4.11)
     dev: true
 
   /unocss@0.56.5(postcss@8.4.31)(vite@4.4.11):

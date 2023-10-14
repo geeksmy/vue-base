@@ -1,14 +1,16 @@
 import {
     defineConfig,
-    presetTypography,
-    presetIcons,
     presetAttributify,
+    presetIcons,
+    presetTypography,
     presetUno,
-    presetWebFonts,
     transformerCompileClass,
     transformerDirectives,
     transformerVariantGroup
 } from "unocss";
+import presetChinese from 'unocss-preset-chinese'
+import presetEase from 'unocss-preset-ease'
+import {presetExtra} from 'unocss-preset-extra'
 
 export default defineConfig({
     transformers: [
@@ -18,17 +20,17 @@ export default defineConfig({
     ],
     presets: [
         presetUno(),
-        presetAttributify(),
+        presetAttributify({
+            prefix: 'un-',
+            prefixedOnly: true
+        }),
         presetTypography(),
+        // presetTagify(),
+        presetChinese(),
+        presetEase(),
+        presetExtra(),
         presetIcons({
             warn: true
-        }),
-        presetWebFonts({
-            fonts: {
-                sans: 'DM Sans',
-                serif: 'DM Serif Display',
-                mono: 'DM Mono',
-            },
         })
     ]
 })

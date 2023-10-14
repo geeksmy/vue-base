@@ -2,9 +2,11 @@ import {createPinia} from 'pinia'
 import {createApp} from 'vue'
 import App from './App.vue'
 import router from '@/router'
-import 'virtual:uno.css'
 import AntDV from 'ant-design-vue'
+import 'ant-design-vue/dist/reset.css'
 import {createPersistedState} from 'pinia-plugin-persistedstate'
+import 'virtual:uno.css'
+// import '@unocss/reset/tailwind.css'
 
 const app = createApp(App)
 
