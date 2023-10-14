@@ -5,6 +5,7 @@ import router from '@/router'
 import 'virtual:uno.css'
 import AntDV from 'ant-design-vue'
 import {createPersistedState} from 'pinia-plugin-persistedstate'
+import 'animate.css'
 
 const app = createApp(App)
 

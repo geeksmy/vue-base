@@ -1,6 +1,8 @@
 <template>
     <h1>主页</h1>
-    <div>{{ token }}</div>
+    <transition>
+        <h1 class="animate__animated animate__bounce">{{ token }}</h1>
+    </transition>
     <div>{{ userInfo }}</div>
 </template>
 
