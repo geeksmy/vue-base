@@ -12,8 +12,6 @@
 </template>
 
 <script lang="ts" setup>
-import {getCurrentInstance, ref} from "vue";
-import {useUserStore} from "@/stores/user.ts";
 
 const LoginForm: any = ref({username: "", password: ""})
 const {GetTokenAndUserInfo} = useUserStore()

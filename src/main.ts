@@ -6,7 +6,7 @@ import AntDV from 'ant-design-vue'
 import 'ant-design-vue/dist/reset.css'
 import {createPersistedState} from 'pinia-plugin-persistedstate'
 import 'virtual:uno.css'
-// import '@unocss/reset/tailwind.css'
+import '@/router/router-guard.ts'
 
 const app = createApp(App)
 
@@ -16,7 +16,9 @@ app.use(AntDV)
 // 导入Pinia
 const pinia = createPinia()
 // 导入Pinia持久化
-pinia.use(createPersistedState({key: id => `__persisted__${id}`,}))
+pinia.use(createPersistedState({
+    key: id => `__pinia__${id}`,
+}))
 app.use(pinia)
 
 // 导入路由

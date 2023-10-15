@@ -1,37 +1,61 @@
-import type {AxiosError, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig} from 'axios'
+import type {AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig} from 'axios'
 import axios from 'axios'
-import {notification} from 'ant-design-vue/es'
-// import { STORAGE_AUTHORIZE_KEY, useAuthorization } from '~/composables/authorization'
+import {STORAGE_AUTHORIZE_KEY, useAuthorization} from '~/composables/authorization'
+import {ContentTypeEnum, RequestEnum} from '~#/http-enum'
 import router from '~/router'
 
 export interface ResponseBody<T = any> {
-    code: number
     id: string
+    code: number
+    data?: T
     msg: string
     time: string
-    data?: T
 }
 
-const instance = axios.create({
+export interface RequestConfigExtra {
+    token?: boolean
+    customDev?: boolean
+    loading?: boolean
+}
+
+const instance: AxiosInstance = axios.create({
     baseURL: import.meta.env.VITE_APP_BASE_API ?? '/',
     timeout: 60000,
+    headers: {'Content-Type': ContentTypeEnum.JSON},
 })
 
-const requestHandler = async (config: InternalAxiosRequestConfig): Promise<InternalAxiosRequestConfig> => {
-    // const token = useAuthorization()
-    // if (token.value)
-    //   config.headers.set(STORAGE_AUTHORIZE_KEY, token.value)
+// const axiosLoading = new AxiosLoading()
+async function requestHandler(config: InternalAxiosRequestConfig & RequestConfigExtra): Promise<InternalAxiosRequestConfig> {
+    // 处理请求前的url
+    if (
+        import.meta.env.DEV
+        && import.meta.env.VITE_APP_BASE_API_DEV
+        && import.meta.env.VITE_APP_BASE_URL_DEV
+        && config.customDev
+    ) {
+        //  替换url的请求前缀baseUrl
+        config.baseURL = import.meta.env.VITE_APP_BASE_API_DEV
+    }
+    const token = useAuthorization()
 
+    if (token.value && config.token !== false)
+        config.headers.set(STORAGE_AUTHORIZE_KEY, token.value)
+
+    // 增加多语言的配置
+    // const { locale } = useI18nLocale()
+    // config.headers.set('Accept-Language', locale.value ?? 'zh-CN')
+    // if (config.loading)
+    //     axiosLoading.addLoading()
     return config
 }
 
-const responseHandler = (response: any): ResponseBody<any> | AxiosResponse<any> | Promise<any> | any => {
+function responseHandler(response: any): ResponseBody<any> | AxiosResponse<any> | Promise<any> | any {
     return response.data
 }
 
-const errorHandler = (error: AxiosError): Promise<any> => {
-    // const { notification } = useGlobalConfig()
-    // const token = useAuthorization()
+function errorHandler(error: AxiosError): Promise<any> {
+    const token = useAuthorization()
+    const notification = useNotification()
 
     if (error.response) {
         const {data, status, statusText} = error.response as AxiosResponse<ResponseBody>
@@ -39,42 +63,48 @@ const errorHandler = (error: AxiosError): Promise<any> => {
             notification?.error({
                 message: '401',
                 description: data?.msg || statusText,
-                duration: 3000,
+                duration: 3,
             })
             /**
              * 这里处理清空用户信息和token的逻辑，后续扩展
              */
-            // token.value = null
+            token.value = null
             router
-                .replace({
+                .push({
                     path: '/login',
                     query: {
-                        redirect: router.currentRoute.value.path,
+                        redirect: router.currentRoute.value.fullPath,
                     },
                 })
                 .then(() => {
                 })
         } else if (status === 403) {
-            // notification?.error({
-            //   title: i18n.global.t('global.request.error.403'),
-            //   content: data?.msg || statusText,
-            //   duration: 3000
-            // })
+            notification?.error({
+                message: '403',
+                description: data?.msg || statusText,
+                duration: 3,
+            })
         } else if (status === 500) {
-            // notification?.error({
-            //   title: i18n.global.t('global.request.error.500'),
-            //   content: data?.msg || statusText,
-            //   duration: 3000
-            // })
+            notification?.error({
+                message: '500',
+                description: data?.msg || statusText,
+                duration: 3,
+            })
         } else {
-            // notification?.error({
-            //   title: i18n.global.t('global.request.error.other'),
-            //   content: data?.msg || statusText,
-            //   duration: 3000
-            // })
+            notification?.error({
+                message: '服务错误',
+                description: data?.msg || statusText,
+                duration: 3,
+            })
         }
     }
     return Promise.reject(error)
+}
+
+interface AxiosOptions<T> {
+    url: string
+    params?: T
+    data?: T
 }
 
 instance.interceptors.request.use(requestHandler)
@@ -83,38 +113,57 @@ instance.interceptors.response.use(responseHandler, errorHandler)
 
 export default instance
 
-export const useGet = <R = any, T = any>(url: string, params?: T, config?: AxiosRequestConfig): Promise<ResponseBody<R>> => {
-    return instance.request({
+function instancePromise<R = any, T = any>(options: AxiosOptions<T> & RequestConfigExtra): Promise<ResponseBody<R>> {
+    // const { loading } = options
+    return new Promise((resolve, reject) => {
+        instance.request(options).then((res) => {
+            resolve(res as any)
+        }).catch((e: Error | AxiosError) => {
+            reject(e)
+        })
+        // .finally(() => {
+        //     if (loading)
+        //         axiosLoading.closeLoading()
+        // })
+    })
+}
+
+export function useGet<R = any, T = any>(url: string, params?: T, config?: AxiosRequestConfig & RequestConfigExtra): Promise<ResponseBody<R>> {
+    const options = {
         url,
         params,
-        method: 'GET',
+        method: RequestEnum.GET,
         ...config,
-    })
+    }
+    return instancePromise<R, T>(options)
 }
 
-export const usePost = <R = any, T = any>(url: string, data?: T, config?: AxiosRequestConfig): Promise<ResponseBody<R>> => {
-    return instance.request({
+export function usePost<R = any, T = any>(url: string, data?: T, config?: AxiosRequestConfig & RequestConfigExtra): Promise<ResponseBody<R>> {
+    const options = {
         url,
         data,
-        method: 'POST',
+        method: RequestEnum.POST,
         ...config,
-    })
+    }
+    return instancePromise<R, T>(options)
 }
 
-export const usePut = <R = any, T = any>(url: string, data?: T, config?: AxiosRequestConfig): Promise<ResponseBody<R>> => {
-    return instance.request({
+export function usePut<R = any, T = any>(url: string, data?: T, config?: AxiosRequestConfig & RequestConfigExtra): Promise<ResponseBody<R>> {
+    const options = {
         url,
         data,
-        method: 'PUT',
+        method: RequestEnum.PUT,
         ...config,
-    })
+    }
+    return instancePromise<R, T>(options)
 }
 
-export const useDelete = <R = any, T = any>(url: string, data?: T, config?: AxiosRequestConfig): Promise<ResponseBody<R>> => {
-    return instance.request({
+export function useDelete<R = any, T = any>(url: string, data?: T, config?: AxiosRequestConfig & RequestConfigExtra): Promise<ResponseBody<R>> {
+    const options = {
         url,
         data,
-        method: 'DELETE',
+        method: RequestEnum.DELETE,
         ...config,
-    })
+    }
+    return instancePromise<R, T>(options)
 }
