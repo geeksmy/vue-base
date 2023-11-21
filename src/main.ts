@@ -17,7 +17,7 @@ app.use(AntDV)
 const pinia = createPinia()
 // 导入Pinia持久化
 pinia.use(createPersistedState({
-    key: id => `__pinia__${id}`,
+    key: id => `__admin__.${id}`,
 }))
 app.use(pinia)
 

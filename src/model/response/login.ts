@@ -1,5 +1,5 @@
 export interface LoginUser {
-
+    id: number
 }
 
 export interface LoginRes {

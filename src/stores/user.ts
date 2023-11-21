@@ -3,6 +3,7 @@ import {shallowRef} from "vue";
 import {LoginApi} from "@/api/common/login.ts";
 import {LoginUser} from "@/model/response/login.ts";
 import {LoginReq} from "@/model/request/login.ts";
+import {parse, stringify} from "zipson/lib";
 
 export const useUserStore = defineStore('user', () => {
     const token = shallowRef()
@@ -18,6 +19,10 @@ export const useUserStore = defineStore('user', () => {
     persist: {
         key: "user",
         storage: localStorage,
-        paths: ['token', 'userInfo']
+        paths: ["token", 'userInfo'],
+        serializer: {
+            deserialize: parse,
+            serialize: stringify
+        }
     }
 })
